@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+	<Properties>
+<!--  		<Property name="log.dir">c:/logs</Property> 		 -->
+ 		<Property name="log.dir">/app/was/provider-portal/logs</Property>
+	 </Properties>
+	 
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %5p [%c] %m%n" />
+        </Console>
+	<!-- application log with async -->
+	<RollingRandomAccessFile name="appserverLog" fileName="${log.dir}/providerServer.log"
+		 filePattern="${log.dir}/providerServer-%d{MM-dd-yyyy}-%i.log.gz">
+		 
+		<ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+		<PatternLayout>
+			<Pattern>%X{tid} %d %-5p %c{1.} (%t) %m%n</Pattern>
+		</PatternLayout>
+		<Policies>
+			<TimeBasedTriggeringPolicy />
+			<SizeBasedTriggeringPolicy size="1024 MB"/>
+		</Policies>
+	</RollingRandomAccessFile>          
+        
+    </Appenders>
+    <Loggers>
+        <Logger name="java.sql" level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+          <!-- log SQL with timing information, post execution -->
+        <Logger name="jdbc.sqltiming" level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+        <Logger name="com.songwoo.mysite" level="DEBUG" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="appserverLog" />                
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>
